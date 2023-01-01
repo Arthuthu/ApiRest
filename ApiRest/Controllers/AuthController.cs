@@ -1,5 +1,6 @@
 ﻿using ApiRest.Dto;
 using ApiRest.Models;
+using ApiRest.Repositories;
 using ApiRest.Tokens;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -15,38 +16,46 @@ namespace ApiRest.Controllers
         private readonly IPasswordProcessors _passwordProcessors;
         private readonly IUserToken _userToken;
         private readonly IUserService _userService;
+        private readonly IUserRepository _userRepository;
 
         public AuthController(IPasswordProcessors passwordProcessors,
             IUserToken userToken,
-            IUserService userService)
+            IUserService userService,
+            IUserRepository userRepository)
         {
             _passwordProcessors = passwordProcessors;
             _userToken = userToken;
             _userService = userService;
+            _userRepository = userRepository;
         }
 
 
         [HttpPost("register")]
-        public async Task<ActionResult<UserModel>> Register(UserDto request)
+        public async Task<ActionResult<UserModel>> Register(UserModel request)
         {
             _passwordProcessors.CreatePasswordHash(request.Password, out byte[] passwordHash, out byte[] passwordSalt);
 
-            user.Username = request.Username;
-            user.PasswordHash = passwordHash;
-            user.PasswordSalt = passwordSalt;
+            request.PasswordHash = passwordHash;
+            request.PasswordSalt = passwordSalt;
 
-            return Ok(user);
+            await _userRepository.CreateUser(request);
+
+            return Ok(request);
         }
 
         [HttpPost("login")]
         public async Task<ActionResult<UserModel>> Login(UserDto request)
         {
-            if (user.Username != request.Username)
+            var databaseUser = _userRepository.GetUserById(4);
+
+            if (databaseUser.Username != request.Username)
             {
                 return BadRequest("User or password is incorrect");
             }
 
-            if (!_passwordProcessors.VerifyPasswordHash(request.Password, user.PasswordHash, user.PasswordSalt))
+            if (!_passwordProcessors.VerifyPasswordHash(databaseUser.Password,
+                databaseUser.PasswordHash,
+                databaseUser.PasswordSalt))
             {
                 return BadRequest("User or password is incorrect");
             }

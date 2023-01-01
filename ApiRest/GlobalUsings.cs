@@ -12,4 +12,5 @@ global using System.Security.Claims;
 global using Dapper;
 global using System.Data;
 global using System.Data.SqlClient;
+global using ApiRest.Dto;
 

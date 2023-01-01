@@ -1,4 +1,5 @@
 ﻿using ApiRest.DbAccess;
+using ApiRest.Dto;
 
 namespace ApiRest.Repositories;
 
@@ -16,9 +17,9 @@ public class UserRepository : IUserRepository
         return _db.LoadData<UserModel, dynamic>("dbo.spUsers_GetAll", new { });
     }
 
-    public async Task<UserModel?> GetUserById(int id)
+    public UserModel GetUserById(int id)
     {
-        var results = await _db.LoadData<UserModel, dynamic>(
+        var results = _db.LoadDataUnsynchronous<UserModel, dynamic>(
             "dbo.spUsers_GetById",
             new { Id = id });
 
@@ -27,7 +28,12 @@ public class UserRepository : IUserRepository
 
     public Task CreateUser(UserModel user)
     {
-        return _db.SaveData("dbo.spUsers_Create", new { user.Username, user.Password, user.Role });
+        return _db.SaveData("dbo.spUsers_Create", new { 
+            user.Username,
+            user.Password,
+            user.Role,
+            user.PasswordHash,
+            user.PasswordSalt});
     }
 
     public Task UpdateUser(UserModel user)
