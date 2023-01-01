@@ -1,5 +1,6 @@
 using ApiRest.DbAccess;
 using ApiRest.Repositories;
+using FluentValidation.AspNetCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -8,6 +9,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddHttpContextAccessor();
+builder.Services.AddFluentValidation(fv => fv.RegisterValidatorsFromAssemblyContaining<UserDto>());
 
 builder.Services.AddSingleton<IPasswordProcessors, PasswordProcessors>();
 builder.Services.AddSingleton<IUserToken, UserToken>();
