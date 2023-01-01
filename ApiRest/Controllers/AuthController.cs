@@ -43,6 +43,16 @@ namespace ApiRest.Controllers
             user.PasswordSalt = passwordSalt;
             user.Role = "Admin";
 
+            var databaseUsers = await _userRepository.GetAllUsers();
+
+            foreach (var databaseUser in databaseUsers)
+            {
+                if (databaseUser.Username == user.Username)
+                {
+                    return BadRequest("The username is already registered");
+                }
+            }
+
             await _userRepository.CreateUser(user);
 
             return Ok(user);
