@@ -68,6 +68,7 @@
     <Build Include="dbo\StoredProcedures\spUsers_GetAll.sql" />
     <Build Include="dbo\StoredProcedures\spUsers_GetById.sql" />
     <Build Include="dbo\StoredProcedures\spUsers_Update.sql" />
+    <Build Include="dbo\StoredProcedures\spUsers_GetByLogin.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="PublishLocations\RestApiDatabase.publish.xml" />

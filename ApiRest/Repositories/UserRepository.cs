@@ -26,6 +26,15 @@ public class UserRepository : IUserRepository
         return results.FirstOrDefault();
     }
 
+    public UserModel? GetUserByLogin(UserDto user)
+    {
+        var result = _db.LoadDataUnsynchronous<UserModel, dynamic>(
+            "dbo.spUsers_GetByLogin",
+            new { Username = user.Username, Password = user.Password });
+
+        return result.FirstOrDefault();
+    }
+
     public Task CreateUser(UserModel user)
     {
         return _db.SaveData("dbo.spUsers_Create", new { 

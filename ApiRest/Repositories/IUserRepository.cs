@@ -7,5 +7,7 @@
         Task<IEnumerable<UserModel>> GetAllUsers();
         UserModel GetUserById(int id);
         Task UpdateUser(UserModel user);
+
+        UserModel GetUserByLogin(UserDto user);
     }
 }

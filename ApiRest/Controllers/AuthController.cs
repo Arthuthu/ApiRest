@@ -31,36 +31,49 @@ namespace ApiRest.Controllers
 
 
         [HttpPost("register")]
-        public async Task<ActionResult<UserModel>> Register(UserModel request)
+        public async Task<ActionResult<UserModel>> Register(UserDto request)
         {
+            UserModel user = new();
+
             _passwordProcessors.CreatePasswordHash(request.Password, out byte[] passwordHash, out byte[] passwordSalt);
 
-            request.PasswordHash = passwordHash;
-            request.PasswordSalt = passwordSalt;
+            user.Username = request.Username;
+            user.Password = request.Password;
+            user.PasswordHash = passwordHash;
+            user.PasswordSalt = passwordSalt;
+            user.Role = "Admin";
 
-            await _userRepository.CreateUser(request);
+            await _userRepository.CreateUser(user);
 
-            return Ok(request);
+            return Ok(user);
         }
 
         [HttpPost("login")]
         public async Task<ActionResult<UserModel>> Login(UserDto request)
         {
-            var databaseUser = _userRepository.GetUserById(4);
+            var user = _userRepository.GetUserByLogin(request);
 
-            if (databaseUser.Username != request.Username)
+            try
+            {
+                if (user.Username is null)
+                {
+                    return BadRequest("User or password is incorrect");
+                }
+            }
+            catch (Exception)
+            {
+                return BadRequest("User or password is incorret");
+            }
+
+
+            if (!_passwordProcessors.VerifyPasswordHash(user.Password,
+                user.PasswordHash,
+                user.PasswordSalt))
             {
                 return BadRequest("User or password is incorrect");
             }
 
-            if (!_passwordProcessors.VerifyPasswordHash(databaseUser.Password,
-                databaseUser.PasswordHash,
-                databaseUser.PasswordSalt))
-            {
-                return BadRequest("User or password is incorrect");
-            }
-
-            string token = _userToken.CreateToken(user);
+            string token = _userToken.CreateToken(AuthController.user);
             return Ok(token);
         }
 
