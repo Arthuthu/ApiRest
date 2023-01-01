@@ -1,13 +1,14 @@
-using ApiRest.Tokens;
-
 var builder = WebApplication.CreateBuilder(args);
 
 //Configure Services
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddHttpContextAccessor();
+
 builder.Services.AddSingleton<IPasswordProcessors, PasswordProcessors>();
 builder.Services.AddSingleton<IUserToken, UserToken>();
+builder.Services.AddSingleton<IUserService, UserService>();
 
 builder.Services.AddSwaggerGen(options =>
 {

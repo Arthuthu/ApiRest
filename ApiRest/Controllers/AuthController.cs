@@ -1,7 +1,9 @@
 ﻿using ApiRest.Dto;
 using ApiRest.Models;
 using ApiRest.Tokens;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace ApiRest.Controllers
 {
@@ -10,17 +12,17 @@ namespace ApiRest.Controllers
     public class AuthController : ControllerBase
     {
         public static UserModel user = new UserModel();
-        private readonly IConfiguration _configuration;
         private readonly IPasswordProcessors _passwordProcessors;
         private readonly IUserToken _userToken;
+        private readonly IUserService _userService;
 
-        public AuthController(IConfiguration configuration,
-            IPasswordProcessors passwordProcessors,
-            IUserToken userToken)
+        public AuthController(IPasswordProcessors passwordProcessors,
+            IUserToken userToken,
+            IUserService userService)
         {
-            _configuration = configuration;
             _passwordProcessors = passwordProcessors;
             _userToken = userToken;
+            _userService = userService;
         }
 
 
@@ -51,6 +53,20 @@ namespace ApiRest.Controllers
 
             string token = _userToken.CreateToken(user);
             return Ok(token);
+        }
+
+        [HttpGet, Authorize]
+        public ActionResult<string> GetUser()
+        {
+            List<string> userData = new List<string>();
+
+            var userName = _userService.GetUserName();
+            var userRole = _userService.GetUserRole();
+
+            userData.Add($"The user name is: {userName}");
+            userData.Add($"The user role is: {userRole}");
+
+            return Ok(userData);
         }
     }
 }

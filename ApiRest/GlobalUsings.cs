@@ -5,3 +5,8 @@ global using Microsoft.OpenApi.Models;
 global using Swashbuckle.AspNetCore.Filters;
 global using System.Text;
 global using ApiRest.Models;
+global using ApiRest.Services.UserService;
+global using ApiRest.Tokens;
+global using Microsoft.Extensions.DependencyInjection;
+global using System.Security.Claims;
+
