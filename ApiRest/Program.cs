@@ -1,3 +1,6 @@
+using ApiRest.DbAccess;
+using ApiRest.Repositories;
+
 var builder = WebApplication.CreateBuilder(args);
 
 //Configure Services
@@ -9,6 +12,10 @@ builder.Services.AddHttpContextAccessor();
 builder.Services.AddSingleton<IPasswordProcessors, PasswordProcessors>();
 builder.Services.AddSingleton<IUserToken, UserToken>();
 builder.Services.AddSingleton<IUserService, UserService>();
+builder.Services.AddSingleton<ISqlDataAccess, SqlDataAccess>();
+builder.Services.AddSingleton<IUserRepository, UserRepository>();
+
+
 
 builder.Services.AddSwaggerGen(options =>
 {

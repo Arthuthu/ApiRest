@@ -9,4 +9,7 @@ global using ApiRest.Services.UserService;
 global using ApiRest.Tokens;
 global using Microsoft.Extensions.DependencyInjection;
 global using System.Security.Claims;
+global using Dapper;
+global using System.Data;
+global using System.Data.SqlClient;
 
